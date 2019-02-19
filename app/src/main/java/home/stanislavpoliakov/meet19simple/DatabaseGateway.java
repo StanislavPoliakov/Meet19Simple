@@ -1,6 +1,5 @@
 package home.stanislavpoliakov.meet19simple;
 
-import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 
@@ -31,6 +30,6 @@ public class DatabaseGateway {
         ResultDatabase database = Room.databaseBuilder(context, ResultDatabase.class, "result")
                 .fallbackToDestructiveMigration()
                 .build();
-        return database.getWeatherDAO();
+        return database.getResultDAO();
     }
 }

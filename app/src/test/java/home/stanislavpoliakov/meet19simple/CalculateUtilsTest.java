@@ -1,5 +1,7 @@
 package home.stanislavpoliakov.meet19simple;
 
+import android.content.Context;
+
 import org.junit.Before;
 import org.junit.Test;
 
