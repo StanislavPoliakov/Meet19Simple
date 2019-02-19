@@ -1,10 +1,12 @@
 package home.stanislavpoliakov.meet19simple;
 
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private TextView resultView;
@@ -13,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isSecondOperand = false;
     private StringBuilder operand1 = new StringBuilder(), operand2 = new StringBuilder();
     private Button buttonEqual;
+    private DatabaseGateway databaseGateway;
 
     private View.OnClickListener numeralListener = v -> {
         Button button = (Button) v;
@@ -39,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         init();
+        databaseGateway = new DatabaseGateway(this);
     }
 
     private void init() {
@@ -86,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
             double result = gotEqual(Double.parseDouble(operand1.toString()),
                     Double.parseDouble(operand2.toString()));
             showResult(result);
+
+            operateDB(result);
         });
 
         Button buttonAdd = findViewById(R.id.buttonAdd);
@@ -103,9 +109,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void addDot() {
         if (!isSecondOperand) {
-            if (!operand1.toString().contains(".")) operand1.append(".");
+            if (!operand1.toString().contains(".")) {
+                operand1.append(".");
+                resultView.setText(operand1);
+            }
         } else {
-            if (!operand2.toString().contains(".")) operand2.append(".");
+            if (!operand2.toString().contains(".")) {
+                operand2.append(".");
+                resultView.setText(operand2);
+            }
         }
     }
 
@@ -137,5 +149,28 @@ public class MainActivity extends AppCompatActivity {
         clearAll();
         operand1.append(String.valueOf(Double.isFinite(result) ? result : 0));
         resultView.setText(String.valueOf(result));
+    }
+
+    private void operateDB(Double calculationResult) {
+        OperateDBTask operateDBTask = new OperateDBTask();
+        operateDBTask.execute(calculationResult);
+    }
+
+    private class OperateDBTask extends AsyncTask<Double, Void, Result> {
+
+        @Override
+        protected Result doInBackground(Double... params) {
+            Result result = new Result(params[0]);
+            databaseGateway.saveResult(result);
+            return databaseGateway.loadResult();
+        }
+
+        @Override
+        protected void onPostExecute(Result result) {
+            super.onPostExecute(result);
+            Toast.makeText(getApplicationContext(), "Database value = " +
+                    String.valueOf(result.getCalculationResult()), Toast.LENGTH_LONG)
+                    .show();
+        }
     }
 }
