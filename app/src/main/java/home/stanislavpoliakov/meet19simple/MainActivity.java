@@ -17,6 +17,9 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonEqual;
     private DatabaseGateway databaseGateway;
 
+    /**
+     * Обработчик нажатия на цифровые кнопки
+     */
     private View.OnClickListener numeralListener = v -> {
         Button button = (Button) v;
         if (!isSecondOperand) {
@@ -29,11 +32,13 @@ public class MainActivity extends AppCompatActivity {
         buttonEqual.setEnabled(!operand1.toString().isEmpty() && !operand2.toString().isEmpty());
     };
 
+    /**
+     * Обработчик нажатия на кнопки операторов ("+", "-", "/", "*")
+     */
     private View.OnClickListener operatorListener = v -> {
         Button button = (Button) v;
         operator = button.getText().toString();
         isSecondOperand = true;
-        //buttonEqual.setEnabled(true);
     };
 
     @Override
@@ -45,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
         databaseGateway = new DatabaseGateway(this);
     }
 
+    /**
+     * Инициализация UI-компонентов
+     */
     private void init() {
         resultView = findViewById(R.id.resultView);
 
@@ -107,6 +115,9 @@ public class MainActivity extends AppCompatActivity {
         buttonDiv.setOnClickListener(operatorListener);
     }
 
+    /**
+     * Добавляем "."
+     */
     private void addDot() {
         if (!isSecondOperand) {
             if (!operand1.toString().contains(".")) {
@@ -121,6 +132,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Метод сброса (очистки)
+     */
     private void clearAll() {
         operand1.setLength(0);
         operand2.setLength(0);
@@ -130,6 +144,13 @@ public class MainActivity extends AppCompatActivity {
         buttonEqual.setEnabled(false);
     }
 
+    /**
+     * Нажатие на "="
+     * Оператор - глобальная переменная
+     * @param d1 первый операнд
+     * @param d2 второй операнд
+     * @return результат (вспомогательный класс)
+     */
     private double gotEqual(double d1, double d2) {
         switch (operator) {
             case "+":
@@ -145,17 +166,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Отображаем результат
+     * @param result результат вычисления
+     */
     private void showResult(double result) {
         clearAll();
         operand1.append(String.valueOf(Double.isFinite(result) ? result : 0));
         resultView.setText(String.valueOf(result));
     }
 
+    /**
+     * Сохраняем в базе и получаем из нее
+     * @param calculationResult
+     */
     private void operateDB(Double calculationResult) {
         OperateDBTask operateDBTask = new OperateDBTask();
         operateDBTask.execute(calculationResult);
     }
 
+    /**
+     * AsyncTask для работы с базой данных
+     */
     private class OperateDBTask extends AsyncTask<Double, Void, Result> {
 
         @Override
@@ -165,6 +197,10 @@ public class MainActivity extends AppCompatActivity {
             return databaseGateway.loadResult();
         }
 
+        /**
+         * После успешной загрузки из базы показываем Toast
+         * @param result
+         */
         @Override
         protected void onPostExecute(Result result) {
             super.onPostExecute(result);

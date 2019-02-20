@@ -1,12 +1,16 @@
 package home.stanislavpoliakov.meet19simple;
 
-import android.content.Context;
-
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import static org.junit.Assert.*;
 
+/**
+ * Модульные тесты вычислений CalculateUtils
+ */
 public class CalculateUtilsTest {
     private CalculateUtils calculateUtils;
     private double delta = 0.00000001;
@@ -73,5 +77,28 @@ public class CalculateUtilsTest {
 
         d1 = Double.NEGATIVE_INFINITY;
         assertEquals(Double.NaN, calculateUtils.division(d1, d2), delta);
+    }
+
+    @Test
+    public void checkPrivateDivision() {
+        Class utilsClass = calculateUtils.getClass();
+        try {
+            Method method = utilsClass.getDeclaredMethod("privateDivision", double.class, double.class);
+            method.setAccessible(true);
+            double d1 = 0;
+            double d2 = 5;
+            System.out.println(method);
+            double res = (double) method.invoke(utilsClass.newInstance(), d1, d2);
+            assertEquals(0.0, res, delta);
+            method.setAccessible(false);
+        } catch (InstantiationException ex) {
+            ex.printStackTrace();
+        } catch (NoSuchMethodException ex) {
+            ex.printStackTrace();
+        } catch (IllegalAccessException ex) {
+            ex.printStackTrace();
+        } catch (InvocationTargetException ex) {
+            ex.printStackTrace();
+        }
     }
 }

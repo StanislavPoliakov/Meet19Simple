@@ -3,15 +3,13 @@ package home.stanislavpoliakov.meet19simple;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 
-
+/**
+ * Класс описывающий сохранение и загрузку результа в/из базу данных
+ */
 public class DatabaseGateway {
     private Context context;
     private ResultDAO dao;
 
-    /**
-     * Получаем вызывающий контекст в конструкторе. Это для инициализации из main
-     * @param context контекст приложения
-     */
     public DatabaseGateway(Context context) {
         this.context = context;
         dao = init();

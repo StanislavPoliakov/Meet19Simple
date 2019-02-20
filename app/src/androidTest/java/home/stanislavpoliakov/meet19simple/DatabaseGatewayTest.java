@@ -12,6 +12,9 @@ import org.junit.runner.RunWith;
 
 import static org.junit.Assert.*;
 
+/**
+ * Инструментальный тест работы с базой
+ */
 @RunWith(AndroidJUnit4.class)
 public class DatabaseGatewayTest {
     private ResultDatabase resultDatabase;
@@ -38,14 +41,6 @@ public class DatabaseGatewayTest {
 
         assertEquals(calc, resultDAO.getResult().getCalculationResult(), delta);
     }
-
-    /*@Test
-    public void saveResult() {
-    }
-
-    @Test
-    public void loadResult() {
-    }*/
 
     @After
     public void closeDB() {
